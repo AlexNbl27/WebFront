@@ -14,7 +14,7 @@ function renderUsers(users) {
     const tr = document.createElement("tr");
     const gender = user.gender === "male" ? "👨" : "👩";
     tr.innerHTML = `
-        <td><img src="${user.picture.thumbnail}" alt="photo"></td>
+        <td><img src="${user.picture.thumbnail}" alt=""></td>
         <td>${user.name.first} ${user.name.last}</td>
         <td>${gender}</td>
         <td>${user.email}</td>

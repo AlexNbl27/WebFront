@@ -7,10 +7,12 @@ async function fetchUsers() {
   return users;
 }
 
-function renderUsers(users) {
+function renderUsers(renderedUsers) {
+  const usersDisplayed = document.getElementById("users-displayed");
+  usersDisplayed.textContent = `Number of users displayed: ${renderedUsers.length} on ${users.length}`;
   const tbody = document.querySelector("#tbl-users tbody");
   tbody.innerHTML = "";
-  const rows = users.map((user) => {
+  const rows = renderedUsers.map((user) => {
     const gender = user.gender === "female" ? "👩" : "👨";
     return `
             <tr>

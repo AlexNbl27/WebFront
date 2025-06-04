@@ -15,8 +15,8 @@
             <h1>Vanilla JS Example</h1>
             <hr>
             <div style="display: flex; gap: 0.5rem; align-items: center; vertical-align: middle;">
-                <button id="fetch-users" type="button" style="flex: 1; margin: 0px 20px;">Fetch Users</button>
-                <div style="display: flex; flex-direction: column; margin: 0px 20px; flex: 1;">
+                <button id="fetch-users" type="button" style="flex: 1; margin: 0px;">Fetch Users</button>
+                <div style="display: flex; flex-direction: column; margin: 0px 40px; flex: 1;">
                     <label for="search-users">Search users</label>
                     <form role="search" id="search-users">
                         <input type="text" id="search-users-input"
@@ -24,7 +24,7 @@
                             autocomplete="off">
                     </form>
                 </div>
-                <div style="display: flex; flex-direction: column; margin: 0px 20px; flex: 1;">
+                <div style="display: flex; flex-direction: column; flex: 1;">
                     <label for="filter-users">Select a user</label>
                     <select id="filter-users" name="filter-users" class="searchw8">
                         <option value="" selected>All</option>
@@ -34,6 +34,7 @@
                 </div>
             </div>
         </div>
+        <h6 id="users-displayed">Number of users displayed:</h6>
         <table id="tbl-users">
             <thead>
                 <tr>

@@ -8,11 +8,11 @@ async function fetchUsers() {
 }
 
 function renderUsers(users) {
-    const tbody = document.querySelector("#tbl-users tbody");
-    tbody.innerHTML = "";
-    const rows = users.map((user) => {
-        const gender = user.gender === "male" ? "👨" : "👩";
-        return `
+  const tbody = document.querySelector("#tbl-users tbody");
+  tbody.innerHTML = "";
+  const rows = users.map((user) => {
+    const gender = user.gender === "female" ? "👩" : "👨";
+    return `
             <tr>
                 <td><img src="${user.picture.thumbnail}" alt=""></td>
                 <td>${user.name.first} ${user.name.last}</td>
@@ -22,8 +22,8 @@ function renderUsers(users) {
                 <td>${user.dob.age}</td>
             </tr>
         `;
-    });
-    tbody.innerHTML = rows.join('');
+  });
+  tbody.innerHTML = rows.join("");
 }
 
 function searchUsersByName(users, searchTerm) {
@@ -35,10 +35,10 @@ function searchUsersByName(users, searchTerm) {
 }
 
 function filterUsersByGender(users, gender) {
-    if (gender === "male" || gender === "female") {
-        return users.filter((user) => user.gender === gender);
-    }
-    return users;
+  if (gender === "male" || gender === "female") {
+    return users.filter((user) => user.gender === gender);
+  }
+  return users;
 }
 
 document.getElementById("fetch-users").addEventListener("click", async () => {
@@ -55,9 +55,9 @@ document
   });
 
 document
-    .getElementById("filter-users")
-    .addEventListener("change", async (event) => {
-        const selectedOption = event.target.value;
-        const filteredUsers = filterUsersByGender(users, selectedOption);
-        renderUsers(filteredUsers);
-    });
+  .getElementById("filter-users")
+  .addEventListener("change", async (event) => {
+    const selectedOption = event.target.value;
+    const filteredUsers = filterUsersByGender(users, selectedOption);
+    renderUsers(filteredUsers);
+  });

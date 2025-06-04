@@ -33,6 +33,13 @@ function searchUsersByName(users, searchTerm) {
   );
 }
 
+function filterUsersByGender(users, gender) {
+    if (gender === "male" || gender === "female") {
+        return users.filter((user) => user.gender === gender);
+    }
+    return users;
+}
+
 document.getElementById("fetch-users").addEventListener("click", async () => {
   users = await fetchUsers();
   renderUsers(users);
@@ -45,3 +52,11 @@ document
     const filteredUsers = searchUsersByName(users, searchTerm);
     renderUsers(filteredUsers);
   });
+
+document
+    .getElementById("filter-users")
+    .addEventListener("change", async (event) => {
+        const selectedOption = event.target.value;
+        const filteredUsers = filterUsersByGender(users, selectedOption);
+        renderUsers(filteredUsers);
+    });

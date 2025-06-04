@@ -8,21 +8,22 @@ async function fetchUsers() {
 }
 
 function renderUsers(users) {
-  const tbody = document.querySelector("#tbl-users tbody");
-  tbody.innerHTML = "";
-  users.forEach((user) => {
-    const tr = document.createElement("tr");
-    const gender = user.gender === "male" ? "👨" : "👩";
-    tr.innerHTML = `
-        <td><img src="${user.picture.thumbnail}" alt=""></td>
-        <td>${user.name.first} ${user.name.last}</td>
-        <td>${gender}</td>
-        <td>${user.email}</td>
-        <td>${user.phone}</td>
-        <td>${user.dob.age}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    const tbody = document.querySelector("#tbl-users tbody");
+    tbody.innerHTML = "";
+    const rows = users.map((user) => {
+        const gender = user.gender === "male" ? "👨" : "👩";
+        return `
+            <tr>
+                <td><img src="${user.picture.thumbnail}" alt=""></td>
+                <td>${user.name.first} ${user.name.last}</td>
+                <td>${gender}</td>
+                <td>${user.email}</td>
+                <td>${user.phone}</td>
+                <td>${user.dob.age}</td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = rows.join('');
 }
 
 function searchUsersByName(users, searchTerm) {

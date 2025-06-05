@@ -29,11 +29,15 @@ function renderUsers(renderedUsers) {
 }
 
 function searchUsersByName(users, searchTerm) {
-  return users.filter((user) =>
-    `${user.name.first} ${user.name.last}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+  const _removeAccents = (str) =>
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  const normalizedSearch = _removeAccents(searchTerm.toLowerCase());
+  return users.filter((user) => {
+    const fullName = `${user.name.first} ${user.name.last}`;
+    const normalizedFullName = _removeAccents(fullName.toLowerCase());
+    return normalizedFullName.includes(normalizedSearch);
+  });
 }
 
 function filterUsersByGender(users, gender) {

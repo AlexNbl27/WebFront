@@ -129,7 +129,9 @@ function handleSortClick(columnToSort) {
 
 document.getElementById("fetch-users").addEventListener("click", async () => {
   const fetchedData = await fetchUsers();
-  pristineFetchedUsers = [...fetchedData];
+  const existingEmails = new Set(pristineFetchedUsers.map(u => u.email));
+  const newUsers = fetchedData.filter(u => !existingEmails.has(u.email));
+  pristineFetchedUsers = [...pristineFetchedUsers, ...newUsers];
 
   currentSearchTerm = "";
   currentGenderFilter = "";

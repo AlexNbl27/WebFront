@@ -138,7 +138,7 @@ document.getElementById("fetch-users").addEventListener("click", async () => {
   currentSort = { column: null, direction: null };
   const searchInput = document.getElementById("search-users-input");
   if (searchInput) searchInput.value = "";
-  document.getElementById("filter-users").value = "";
+  document.getElementById("filter-users-by-gender").value = "";
 
   applyFiltersAndSort();
 });
@@ -149,7 +149,7 @@ searchInputElement.addEventListener("input", (event) => {
   applyFiltersAndSort();
 });
 
-document.getElementById("filter-users").addEventListener("change", (event) => {
+document.getElementById("filter-users-by-gender").addEventListener("change", (event) => {
   currentGenderFilter = event.target.value;
   applyFiltersAndSort();
 });

@@ -1,5 +1,4 @@
-let users = [];
-let pristineFetchedUsers = [];
+let alreadyFetchedUsers = [];
 let currentSort = { column: null, direction: null };
 let currentSearchTerm = "";
 let currentGenderFilter = "";
@@ -12,7 +11,7 @@ async function fetchUsers() {
 
 function renderUsers(usersToRender) {
   const usersDisplayed = document.getElementById("users-displayed");
-  usersDisplayed.textContent = `Number of users displayed: ${usersToRender.length} of ${pristineFetchedUsers.length}`;
+  usersDisplayed.textContent = `Number of users displayed: ${usersToRender.length} of ${alreadyFetchedUsers.length}`;
   const tbody = document.querySelector("#tbl-users tbody");
   tbody.innerHTML = "";
   const rows = usersToRender.map((user) => {
@@ -31,56 +30,42 @@ function renderUsers(usersToRender) {
   tbody.innerHTML = rows.join("");
 }
 
-function searchUsersByName(usersList, searchTerm) {
+function _searchUsersByName(usersList, searchTerm) {
   const _removeAccents = (str) =>
-    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    str
+      .normalize("NFD")
+      .toLowerCase()
+      .replace(/[\u0300-\u036f]/g, "");
 
-  const normalizedSearch = _removeAccents(searchTerm.toLowerCase());
+  const normalizedSearch = _removeAccents(searchTerm);
   if (!normalizedSearch) return usersList;
   return usersList.filter((user) => {
     const fullName = `${user.name.first} ${user.name.last}`;
-    const normalizedFullName = _removeAccents(fullName.toLowerCase());
+    const normalizedFullName = _removeAccents(fullName);
     return normalizedFullName.includes(normalizedSearch);
   });
 }
 
-function filterUsersByGender(usersList, gender) {
-  if (gender === "male" || gender === "female") {
-    return usersList.filter((user) => user.gender === gender);
-  }
-  return usersList;
+function _filterUsersByGender(usersList) {
+  if (!currentGenderFilter) return usersList;
+  return usersList.filter((user) => user.gender === currentGenderFilter);
 }
 
-function updateSortIndicators() {
+function _updateSortIndicators() {
   const ths = document.querySelectorAll("#tbl-users th[data-sort]");
-  ths.forEach(th => {
+  ths.forEach((th) => {
     th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.sort === 'dob.age') {
-      th.textContent = 'Age'; // Base text
-    }
-
     if (th.dataset.sort === currentSort.column && currentSort.direction) {
-      th.classList.add(currentSort.direction === "asc" ? "sorted-asc" : "sorted-desc");
-      const arrow = currentSort.direction === "asc" ? " ↑" : " ↓";
-      if (th.dataset.sort === 'dob.age') {
-        th.textContent = `Age${arrow}`;
-      }
+      th.classList.add(
+        currentSort.direction === "asc" ? "sorted-asc" : "sorted-desc"
+      );
     }
   });
 }
 
-function applyFiltersAndSort() {
-  let processedUsers = [...pristineFetchedUsers];
-
-  // 1. Apply Search Filter
-  processedUsers = searchUsersByName(processedUsers, currentSearchTerm);
-
-  // 2. Apply Gender Filter
-  processedUsers = filterUsersByGender(processedUsers, currentGenderFilter);
-
-  // 3. Apply Sorting
+function _sortUsers(processedUsers, currentSort) {
   if (currentSort.column && currentSort.direction) {
-    processedUsers.sort((a, b) => {
+    processedUsers = processedUsers.toSorted((a, b) => {
       const getValue = (obj, path) =>
         path
           .split(".")
@@ -92,26 +77,24 @@ function applyFiltersAndSort() {
       let valA = getValue(a, currentSort.column);
       let valB = getValue(b, currentSort.column);
 
-      if (currentSort.column === "dob.age") {
-        valA = Number(valA);
-        valB = Number(valB);
-      } else if (typeof valA === "string" && typeof valB === "string") {
-        valA = valA.toLowerCase();
-        valB = valB.toLowerCase();
-      } else {
-        if (valA === undefined || valA === null) return currentSort.direction === "asc" ? -1 : 1;
-        if (valB === undefined || valB === null) return currentSort.direction === "asc" ? 1 : -1;
+      const directionPonderation = currentSort.direction === "asc" ? 1 : -1;
+      if (typeof valA === "number" && typeof valB === "number") {
+        return (valA - valB) * directionPonderation;
       }
 
-      if (valA < valB) return currentSort.direction === "asc" ? -1 : 1;
-      if (valA > valB) return currentSort.direction === "asc" ? 1 : -1;
-      return 0;
+      return String(valA).localeCompare(String(valB)) * directionPonderation;
     });
   }
+  return processedUsers;
+}
 
-  users = processedUsers;
-  renderUsers(users);
-  updateSortIndicators();
+function applyFiltersAndSort() {
+  let processedUsers = alreadyFetchedUsers;
+  processedUsers = _searchUsersByName(processedUsers, currentSearchTerm);
+  processedUsers = _filterUsersByGender(processedUsers, currentGenderFilter);
+  processedUsers = _sortUsers(processedUsers, currentSort);
+  renderUsers(processedUsers);
+  _updateSortIndicators();
 }
 
 function handleSortClick(columnToSort) {
@@ -129,9 +112,9 @@ function handleSortClick(columnToSort) {
 
 document.getElementById("fetch-users").addEventListener("click", async () => {
   const fetchedData = await fetchUsers();
-  const existingEmails = new Set(pristineFetchedUsers.map(u => u.email));
-  const newUsers = fetchedData.filter(u => !existingEmails.has(u.email));
-  pristineFetchedUsers = [...pristineFetchedUsers, ...newUsers];
+  const existingEmails = new Set(alreadyFetchedUsers.map((u) => u.email));
+  const newUsers = fetchedData.filter((u) => !existingEmails.has(u.email));
+  alreadyFetchedUsers = [...alreadyFetchedUsers, ...newUsers];
 
   currentSearchTerm = "";
   currentGenderFilter = "";
@@ -143,16 +126,19 @@ document.getElementById("fetch-users").addEventListener("click", async () => {
   applyFiltersAndSort();
 });
 
-const searchInputElement = document.getElementById("search-users-input") || document.getElementById("search-users");
-searchInputElement.addEventListener("input", (event) => {
-  currentSearchTerm = event.target.value;
-  applyFiltersAndSort();
-});
+document
+  .getElementById("search-users-input")
+  .addEventListener("input", (event) => {
+    currentSearchTerm = event.target.value;
+    applyFiltersAndSort();
+  });
 
-document.getElementById("filter-users-by-gender").addEventListener("change", (event) => {
-  currentGenderFilter = event.target.value;
-  applyFiltersAndSort();
-});
+document
+  .getElementById("filter-users-by-gender")
+  .addEventListener("change", (event) => {
+    currentGenderFilter = event.target.value;
+    applyFiltersAndSort();
+  });
 
 document.querySelectorAll("#tbl-users th[data-sort]").forEach((th) => {
   th.addEventListener("click", () => handleSortClick(th.dataset.sort));

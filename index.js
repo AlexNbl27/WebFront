@@ -43,6 +43,77 @@ function filterUsersByGender(users, gender) {
   return users;
 }
 
+let currentSort = { column: null, direction: null };
+
+function sortTable(columnToSort) {
+  const ths = document.querySelectorAll("#tbl-users th");
+  ths.forEach((th) => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+  });
+
+  if (currentSort.column !== columnToSort) {
+    currentSort.column = columnToSort;
+    currentSort.direction = "asc";
+  } else if (currentSort.direction === "asc") {
+    currentSort.direction = "desc";
+  } else if (currentSort.direction === "desc") {
+    currentSort.column = null;
+    currentSort.direction = null;
+  }
+
+  let usersToDisplay;
+  if (currentSort.direction) {
+    users.sort((a, b) => {
+      const getValue = (obj, path) =>
+        path
+          .split(".")
+          .reduce(
+            (o, key) =>
+              o && typeof o === "object" && key in o ? o[key] : undefined,
+            obj
+          );
+      let valA = getValue(a, currentSort.column);
+      let valB = getValue(b, currentSort.column);
+      if (currentSort.column === "dob.age") {
+        valA = Number(valA);
+        valB = Number(valB);
+      } else if (typeof valA === "string" && typeof valB === "string") {
+        valA = valA.toLowerCase();
+        valB = valB.toLowerCase();
+      } else {
+        if (valA === undefined || valA === null)
+          return currentSort.direction === "asc" ? -1 : 1;
+        if (valB === undefined || valB === null)
+          return currentSort.direction === "asc" ? 1 : -1;
+      }
+      if (valA < valB) return currentSort.direction === "asc" ? -1 : 1;
+      if (valA > valB) return currentSort.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    usersToDisplay = users;
+    const activeTh = document.querySelector(
+      `#tbl-users th[data-sort="${currentSort.column}"]`
+    );
+    if (activeTh) {
+      activeTh.classList.add(
+        currentSort.direction === "asc" ? "sorted-asc" : "sorted-desc"
+      );
+      activeTh.textContent = activeTh.textContent = ` ${
+        currentSort.direction === "asc" ? "Age ↑" : " Age ↓"
+      }`;
+    }
+  } else {
+    users = [...pristineFetchedUsers];
+    usersToDisplay = users;
+    activeTh.textContent = activeTh.textContent = ` ${"Age"}`;
+  }
+  renderUsers(usersToDisplay);
+}
+
+document.querySelectorAll("#tbl-users th[data-sort]").forEach((th) => {
+  th.addEventListener("click", () => sortTable(th.dataset.sort));
+});
+
 document.getElementById("fetch-users").addEventListener("click", async () => {
   users = await fetchUsers();
   renderUsers(users);

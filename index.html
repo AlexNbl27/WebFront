@@ -106,11 +106,10 @@
                 <h1>Vue 3 Example</h1>
                 <hr>
                 <div class="controls-grid">
-                    <button @click="fetchAndSetUsers" style="margin: 16px 0;">Fetch Users</button>
+                    <button @click="fetchUsers" style="margin: 16px 0;">Fetch Users</button>
                     <div class="form-control">
                         <label>Search users by name
-                            <input type="text" placeholder="Type to search..."
-                                v-model="searchTerm" autocomplete="off">
+                            <input type="text" placeholder="Type to search..." v-model="searchTerm" autocomplete="off">
                         </label>
                     </div>
                     <div class="form-control">
@@ -139,17 +138,14 @@
                     <div class="form-control">
                         <label>
                             Email
-                            <input type="email" required
-                                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                                v-model="formData.email"
-                                placeholder="alice.dupont@email.com">
+                            <input type="email" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                v-model="formData.email" placeholder="alice.dupont@email.com">
                         </label>
                     </div>
                     <div class="form-control">
                         <label>
                             Phone
-                            <input type="tel" required pattern="^\+?[0-9\s\-\(\)]+$"
-                                v-model="formData.phone"
+                            <input type="tel" required pattern="^\+?[0-9\s\-\(\)]+$" v-model="formData.phone"
                                 placeholder="+33 6 12 34 56 78">
                         </label>
                     </div>
@@ -166,8 +162,7 @@
                     <div class="form-control">
                         <label>
                             Age
-                            <input type="number" required min="0" pattern="^\d+$"
-                                v-model="formData.age"
+                            <input type="number" required min="0" pattern="^\d+$" v-model="formData.age"
                                 placeholder="28">
                         </label>
                     </div>
@@ -308,7 +303,7 @@
                         return users;
                     });
 
-                    async function fetchAndSetUsers() {
+                    async function fetchUsers() {
                         const response = await fetch("https://randomuser.me/api/?results=20");
                         const data = await response.json();
                         const existingEmails = new Set(allUsers.value.map(u => u.email));
@@ -335,7 +330,7 @@
                             'sorted-desc': sortState.direction === 'desc'
                         };
                     }
-                    
+
                     const formData = ref({
                         firstName: '',
                         lastName: '',
@@ -367,7 +362,7 @@
                                 thumbnail: 'https://placehold.co/400x400.png'
                             }
                         });
-                        
+
                         formData.value = {
                             firstName: '',
                             lastName: '',
@@ -385,7 +380,7 @@
                         sortState,
                         processedUsers,
                         formData,
-                        fetchAndSetUsers,
+                        fetchUsers,
                         handleSort,
                         getSortClasses,
                         submitNewUser,

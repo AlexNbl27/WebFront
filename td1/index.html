@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Vanilla JS Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.fluid.classless.min.css">
+    <style>
+        main {
+            margin: auto;
+            padding: 1rem;
+        }
+        .sorted-asc::after {
+            content: ' ↑';
+        }
+        .sorted-desc::after {
+            content: ' ↓';
+        }
+        .table-message td {
+            text-align: center;
+            padding: 1rem;
+            color: var(--muted-color);
+        }
+        th {
+            cursor: pointer;
+        }
+        th::after {
+            content: ' ⯆';
+            color: var(--muted-color);
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div>
+            <h1>Vanilla JS Example</h1>
+            <hr>
+            <div style="display: flex; gap: 0.5rem; align-items: center; vertical-align: middle;">
+                <button id="fetch-users" type="button" style="flex: 1; margin: 0px;">Fetch Users</button>
+                <div style="display: flex; flex-direction: column; margin: 0px 40px; flex: 1;">
+                    <label for="search-users-input">Search users</label>
+                    <input type="text" id="search-users-input" placeholder="Type the name or the first name of the user"
+                        aria-label="Search </div>users" autocomplete="off">
+                </div>
+                <div style="display: flex; flex-direction: column; flex: 1;">
+                    <label for="filter-users-by-gender">Select a genre</label>
+                    <select id="filter-users-by-gender" name="filter-users-by-gender" class="searchw8">
+                        <option value="" selected>All</option>
+                        <option value="male">👨</option>
+                        <option value="female">👩</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <h6 id="users-displayed">Number of users displayed:</h6>
+        <table id="tbl-users">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Nom</th>
+                    <th>Genre</th>
+                    <th class="sortable-column" data-sort="email">Email</th>
+                    <th>Tel</th>
+                    <th class="sortable-column" data-sort="dob.age">Age</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </main>
+    <script src='index.js'></script>
+</body>
+
+</html>
